@@ -19,8 +19,7 @@ commands:
           no_output_timeout: 30s
       - run:
           name: Run deployment
-          command: |
-            ssh -o StrictHostKeyChecking=no -v $SSH_USER@$SSH_ADDRESS "./deploy.sh"
+          command: ssh -o StrictHostKeyChecking=no -v $SSH_USER@$SSH_ADDRESS /var/www/firstroom/deploy.sh
 
 jobs:
   deploy:
