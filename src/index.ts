@@ -9,7 +9,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, (bot) => {
-  console.log(`Logged in as ${bot.user.tag}.`);
+  console.info(`Logged in as ${bot.user.tag}.`);
 });
 
 client.on(Events.VoiceStateUpdate, async (os, ns) => {
@@ -18,12 +18,12 @@ client.on(Events.VoiceStateUpdate, async (os, ns) => {
     const userId = os.member.id;
 
     let message;
-    if (!os.channel && ns.channel) {
-      message = `<@${userId}> joined <#${ns.channel.id}>.`;
-    } else if (os.channel && !ns.channel) {
-      message = `<@${userId}> left <#${os.channel?.id}>.`;
-    } else if (os.channel && ns.channel) {
-      message = `<@${userId}> left <#${os.channel.id}> and joined <#${ns.channel.id}>.`;
+    if (!os.channelId && ns.channelId) {
+      message = `<@${userId}> joined <#${ns.channelId}>.`;
+    } else if (os.channelId && !ns.channelId) {
+      message = `<@${userId}> left <#${os.channelId}>.`;
+    } else if (os.channelId && ns.channelId && os.channelId !== ns.channelId) {
+      message = `<@${userId}> left <#${os.channelId}> and joined <#${ns.channelId}>.`;
     } else {
       throw new Error('Invalid workflow.');
     }
@@ -38,4 +38,6 @@ client.on(Events.VoiceStateUpdate, async (os, ns) => {
   }
 });
 
-client.login(process.env.DISCORD_BOT_TOKEN);
+(async () => {
+  await client.login(process.env.DISCORD_BOT_TOKEN);
+})();
