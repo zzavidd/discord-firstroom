@@ -1,3 +1,4 @@
+import type { VoiceState } from 'discord.js';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import 'dotenv/config';
 import invariant from 'tiny-invariant';
@@ -19,9 +20,9 @@ client.on(Events.VoiceStateUpdate, async (os, ns) => {
 
     let message;
     if (!os.channelId && ns.channelId) {
-      message = `<@${userId}> joined <#${ns.channelId}>.`;
+      message = getMessage(userId, 'joined', ns);
     } else if (os.channelId && !ns.channelId) {
-      message = `<@${userId}> left <#${os.channelId}>.`;
+      message = getMessage(userId, 'left', os);
     } else if (os.channelId && ns.channelId && os.channelId !== ns.channelId) {
       message = `<@${userId}> left <#${os.channelId}> and joined <#${ns.channelId}>.`;
     } else {
@@ -41,3 +42,29 @@ client.on(Events.VoiceStateUpdate, async (os, ns) => {
 (async () => {
   await client.login(process.env.DISCORD_BOT_TOKEN);
 })();
+
+/**
+ * Constructs the message to send to the Discord channel.
+ * @param userId The user ID.
+ * @param verb The verb for joining or leaving.
+ * @param state The voice state.
+ * @returns The message.
+ */
+function getMessage(
+  userId: string,
+  verb: 'joined' | 'left',
+  state: VoiceState,
+): string {
+  const size = state.channel?.members.size;
+
+  const firstLine = `<@${userId}> ${verb} <#${state.channelId}>.`;
+  const secondLine =
+    '\nThere ' +
+    (size === 1 ? 'is' : 'are') +
+    ' now ' +
+    (size ? `**${size}**` : 'no') +
+    ' member' +
+    (size === 1 ? '' : 's') +
+    ' in the channel.';
+  return firstLine + secondLine;
+}
