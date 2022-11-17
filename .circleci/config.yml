@@ -23,15 +23,15 @@ commands:
             ssh -o StrictHostKeyChecking=no -v $SSH_USER@$SSH_ADDRESS "./deploy.sh"
 
 jobs:
-  transfer:
+  deploy:
     executor: ssh
     steps:
-      - transfer_scripts
+      - transfer
 
 workflows:
   deploy:
     jobs:
-      - trasnfer:
+      - deploy:
           filters:
             branches:
               only:
