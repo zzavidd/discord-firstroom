@@ -4,9 +4,6 @@ services:
   firstroom:
     image: firstroom
     container_name: firstroom_bot
-    build:
-      context: ..
-      dockerfile: ./Dockerfile
     environment:
       PORT: 6546
     ports:
