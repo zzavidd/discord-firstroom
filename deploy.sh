@@ -5,7 +5,6 @@ BRANCH=main
 WORKDIR=firstroom
 
 ## Update the project
-info 'Checking out project...'
 cd "/var/www/${WORKDIR}"
 git checkout "$BRANCH"
 git fetch origin "$BRANCH"
