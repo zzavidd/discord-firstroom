@@ -15,7 +15,7 @@ commands:
       - checkout
       - run:
           name: Transfer scripts
-          command: scp -o StrictHostKeyChecking=no -r ./* $SSH_USER@$SSH_ADDRESS:/var/www/firstroom/
+          command: scp -o StrictHostKeyChecking=no -r . $SSH_USER@$SSH_ADDRESS:/var/www/firstroom/
           no_output_timeout: 30s
       - run:
           name: Run deployment
