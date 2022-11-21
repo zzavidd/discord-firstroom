@@ -33,8 +33,9 @@ export async function notifyVoiceChannelEvent(
     if (channel.isTextBased()) {
       await channel.send(message);
     }
-  } catch (e) {
-    console.error(e);
+  } catch (e: any) {
+    const date = new Intl.DateTimeFormat('en-CA').format(new Date());
+    console.error(`${date} - ${e.message}`);
   }
 }
 
@@ -84,7 +85,10 @@ function getMessage(userId: string, stateCouple: VoiceStateCouple): string {
   }
 
   if (channelToSize) {
-    const size = channelToSize.members.size;
+    const size = channelToSize.members.filter((e) => {
+      const user = Client.users.cache.get(e.id);
+      return user && !user.bot;
+    }).size;
     secondLine =
       '\nThere ' +
       (size === 1 ? 'is' : 'are') +
