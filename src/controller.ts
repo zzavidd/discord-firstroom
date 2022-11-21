@@ -1,5 +1,5 @@
 import type { VoiceBasedChannel, VoiceState } from 'discord.js';
-import { PermissionFlagsBits } from 'discord.js';
+import { bold, PermissionFlagsBits, userMention } from 'discord.js';
 import invariant from 'tiny-invariant';
 
 import { Client } from './client';
@@ -19,6 +19,9 @@ export async function notifyVoiceChannelEvent(
   try {
     invariant(os.member && ns.member, 'Member not found.');
     const userId = os.member.id;
+
+    const user = Client.users.cache.get(userId);
+    invariant(user && !user.bot, 'User is a bot.');
 
     const message = getMessage(userId, {
       left: os.channel,
@@ -56,22 +59,24 @@ function getMessage(userId: string, stateCouple: VoiceStateCouple): string {
   if (!left && joined) {
     const isPublic = isPublicChannel(joined);
     invariant(isPublic, 'Channel is private.');
-    firstLine = `<@${userId}> joined ${joined}.`;
+    firstLine = `${userMention(userId)} joined ${joined.name}.`;
     channelToSize = joined;
   } else if (left && !joined) {
     const isPublic = isPublicChannel(left);
     invariant(isPublic, 'Channel is private.');
-    firstLine = `<@${userId}> left ${left}.`;
+    firstLine = `${userMention(userId)} left ${left.name}.`;
     channelToSize = left;
   } else if (left && joined && left !== joined) {
     if (!isPublicChannel(left)) {
-      firstLine = `<@${userId}> joined ${joined}.`;
+      firstLine = `${userMention(userId)} joined ${joined.name}.`;
       channelToSize = joined;
     } else if (!isPublicChannel(joined)) {
-      firstLine = `<@${userId}> left ${left}.`;
+      firstLine = `${userMention(userId)} left ${left.name}.`;
       channelToSize = left;
     } else {
-      firstLine = `<@${userId}> left ${left} and joined ${joined}.`;
+      firstLine = `${userMention(userId)} left ${left.name} and joined ${
+        joined.name
+      }.`;
       channelToSize = joined;
     }
   } else {
@@ -83,11 +88,11 @@ function getMessage(userId: string, stateCouple: VoiceStateCouple): string {
     secondLine =
       '\nThere ' +
       (size === 1 ? 'is' : 'are') +
-      ' now ' +
-      (size ? `**${size}**` : 'no') +
+      ' ' +
+      (size ? bold(String(size)) : 'no') +
       ' member' +
       (size === 1 ? '' : 's') +
-      ' in the channel.';
+      ' in this channel.';
   } else {
     secondLine = '';
   }
