@@ -16,6 +16,7 @@ WORKDIR /var/www/firstroom
 
 COPY --from=build /var/www/firstroom/package.json .
 COPY --from=build /var/www/firstroom/yarn.lock .
+COPY --from=build /var/www/firstroom/.env .
 COPY --from=build /var/www/firstroom/dist/ ./dist/
 
 RUN yarn install --frozen-lockfile --production
