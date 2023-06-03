@@ -1,4 +1,4 @@
-FROM node:16.13.1-alpine as build
+FROM node:16.13.1-alpine3.13 as build
 
 WORKDIR /var/www/firstroom
 COPY ./package.json ./
